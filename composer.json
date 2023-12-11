@@ -1,0 +1,40 @@
+{
+  "name": "prom-cms/propel-model-behavior",
+  "description": "PromCMS Propel Model Behavior",
+  "license": "MIT",
+  "type" : "propel-behavior",
+  "extra": {
+    "name": "prom_model",
+    "class": "\\PromCMS\\Core\\Propel\\Behaviors\\PromModel\\Behavior"
+  },
+  "authors": [
+    {
+      "name": "Ondřej Langr",
+      "email": "hi@ondrejlangr.cz"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "PromCMS\\Core\\Propel\\Behaviors\\PromModel\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PromCMS\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "propel/propel": "~2.0@beta"
+  },
+  "require-dev": {
+    "spatie/phpunit-watcher": "^1.8",
+    "fakerphp/faker": "^1.23"
+  },
+  "scripts": {
+    "test": [
+      "Composer\\Config::disableProcessTimeout",
+      "phpunit --testdox --stop-on-failure tests"
+    ]
+  }
+}
