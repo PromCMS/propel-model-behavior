@@ -75,7 +75,7 @@ class Behavior extends \Propel\Generator\Model\Behavior
  * Gets table, and it's columns, metadata
  *
  */
-public function getPromMetadata()
+public static function getPromCMSMetadata()
 {
   return [
     'icon' => '', // This will be added later
