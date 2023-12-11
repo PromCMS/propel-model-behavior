@@ -12,7 +12,7 @@ class Behavior extends \Propel\Generator\Model\Behavior
 
   public function objectMethods()
   {
-    $script .= $this->addGetPromMetadata();
+    $script = $this->addGetPromMetadata();
     return $script;
   }
 
