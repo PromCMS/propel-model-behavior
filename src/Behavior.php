@@ -12,7 +12,6 @@ class Behavior extends \Propel\Generator\Model\Behavior
 
   public function objectMethods()
   {
-    $script = _;
     $script .= $this->addGetPromMetadata();
     return $script;
   }
@@ -58,7 +57,7 @@ class Behavior extends \Propel\Generator\Model\Behavior
   protected function addGetPromMetadata()
   {
     $table = $this->getTable();
-    // $tablePhpName = $table->getPhpName();
+    $tablePhpName = $table->getPhpName();
 
     $hasSoftDelete = $this->booleanToString($table->hasBehavior('archivable'));
     $hasTimestamps = $this->booleanToString($table->hasBehavior('timestampable'));
@@ -71,8 +70,6 @@ class Behavior extends \Propel\Generator\Model\Behavior
 
     // $tableMetadata = $this->getAdminMetadata($table);
 
-
-
     return "
 /**
  * Gets table, and it's columns, metadata
@@ -84,7 +81,7 @@ public function getPromMetadata()
     'icon' => '', // This will be added later
     'ignoreSeeding' => $ignoreSeeding,
     'admin' => [], // This will be added later
-    'tableName' => self::\$TABLE_NAME,
+    'tableName' => ($tablePhpName::TABLE_MAP)::TABLE_NAME,
     'hasTimestamps' => $hasTimestamps,
     'hasSoftDelete' => $hasSoftDelete,
     'columns' => [], // This will be added later
