@@ -13,6 +13,7 @@ class Behavior extends \Propel\Generator\Model\Behavior
   {
     $script = '';
     $script .= $this->addGetPromMetadata();
+    $script .= $this->addIsSingleton();
     return $script;
   }
 
@@ -70,6 +71,18 @@ class Behavior extends \Propel\Generator\Model\Behavior
     }
 
     return $result;
+  }
+
+  protected function addIsSingleton()
+  {
+    $table = $this->getTable();
+    $tablePhpName = $table->getPhpName();
+
+    return "
+public static function isSingleton()
+{
+  return str_contains(($tablePhpName::TABLE_MAP)::TABLE_NAME, 'singleton_');
+}";
   }
 
   protected function addGetPromMetadata()
