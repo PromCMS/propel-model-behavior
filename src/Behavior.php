@@ -13,7 +13,6 @@ class Behavior extends \Propel\Generator\Model\Behavior
   {
     $script = '';
     $script .= $this->addGetPromMetadata();
-    $script .= $this->addColumnsMetadata();
     return $script;
   }
 
@@ -73,9 +72,10 @@ class Behavior extends \Propel\Generator\Model\Behavior
     return $result;
   }
 
-  protected function addColumnsMetadata()
+  protected function addGetPromMetadata()
   {
     $table = $this->getTable();
+    $tablePhpName = $table->getPhpName();
     $columns = $table->getColumns();
     $localizedColumns = [];
     $columnsAsMetadata = [];
@@ -86,6 +86,18 @@ class Behavior extends \Propel\Generator\Model\Behavior
     if ($localizedBehaviorInfo = $table->getBehavior('i18n')) {
       $localizedColumns = array_map(fn(Column $column) => $column->getName(), $localizedBehaviorInfo->getI18nColumns());
     }
+
+
+    $hasSoftDelete = json_encode($table->hasBehavior('archivable'));
+    $hasTimestamps = json_encode($table->hasBehavior('timestampable'));
+    $hasOrdering = json_encode($table->hasBehavior('sortable'));
+    $isDraftable = json_encode(false);
+
+    $isSharable = $table->getAttribute('prom.sharable', 'false');
+    $isOwnable = $table->getAttribute('prom.ownable', 'false');
+
+    $tableMetadata = $this->getPromMetadata($table);
+    $icon = $tableMetadata['adminMetadata']['icon'];
 
     foreach ($columns as $column) {
       $columnMetadata = $this->getPromMetadata($column);
@@ -100,27 +112,6 @@ class Behavior extends \Propel\Generator\Model\Behavior
     }
 
     return "
-private static \$promCmsColumnsMetadata = " . $this->arrayToStringArray($columnsAsMetadata) . ";
-";
-  }
-
-  protected function addGetPromMetadata()
-  {
-    $table = $this->getTable();
-    $tablePhpName = $table->getPhpName();
-
-    $hasSoftDelete = json_encode($table->hasBehavior('archivable'));
-    $hasTimestamps = json_encode($table->hasBehavior('timestampable'));
-    $hasOrdering = json_encode($table->hasBehavior('sortable'));
-    $isDraftable = json_encode(false);
-
-    $isSharable = $table->getAttribute('prom.sharable', 'false');
-    $isOwnable = $table->getAttribute('prom.ownable', 'false');
-
-    $tableMetadata = $this->getPromMetadata($table);
-    $icon = $tableMetadata['adminMetadata']['icon'];
-
-    return "
 private static \$promCmsMetadata = [
   " . $this->arrayToStringArray($tableMetadata, "", "") . "
   /** @deprec */
@@ -130,7 +121,7 @@ private static \$promCmsMetadata = [
   'tableName' => ($tablePhpName::TABLE_MAP)::TABLE_NAME,
   'hasTimestamps' => $hasTimestamps,
   'hasSoftDelete' => $hasSoftDelete,
-  'columns' => static::\$promCmsColumnsMetadata,
+  'columns' => " . $this->arrayToStringArray($columnsAsMetadata) . ",
   'hasOrdering' => $hasOrdering,
   'isDraftable' => $isDraftable,
   'isSharable' => $isSharable,
